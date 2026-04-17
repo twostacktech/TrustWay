@@ -17,15 +17,18 @@ export class UsuarioService {
     }
     
     async findByCpf(cpf: string): Promise<Usuario> {
-        const usuario = await this.usuarioRepository.findOne({
-            where: { cpf }
-        });
+    const usuario = await this.usuarioRepository.findOne({
+        where: { cpf },
+        relations: ['veiculos']
+    });
 
-        if (!usuario)
-            throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    if (!usuario)
+        throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
 
-        return usuario;
-    }
+    usuario.senha = undefined as any;
+
+    return usuario;
+}
 
     async findAllByNome(nome: string): Promise<Usuario[]> {
         return this.usuarioRepository.find({
