@@ -35,8 +35,16 @@ export class UsuarioService {
         });
     }
 
+    async findByEmail(email: string): Promise<Usuario | null> {
+        return await this.usuarioRepository.findOne({
+            where: {
+                email: email
+            }
+        })
+    }
+
     async create(usuario: Usuario): Promise<Usuario> {
-        const buscaUsuario = await this.findByCpf(usuario.cpf);
+        const buscaUsuario = await this.findByEmail(usuario.email);
 
         if (buscaUsuario)
             throw new HttpException("O Usuario já existe", HttpStatus.BAD_REQUEST);
@@ -49,16 +57,12 @@ export class UsuarioService {
     async update(usuario: Usuario): Promise<Usuario> {
 
         await this.findByCpf(usuario.cpf);
-
-        const buscaUsuario = await this.findAllByNome(usuario.nome);
-
-        if (buscaUsuario.length > 0)
+        const buscaUsuario = await this.findByEmail(usuario.email);
+        if (buscaUsuario && buscaUsuario.cpf !== usuario.cpf)
             throw new HttpException("O Usuario já existe", HttpStatus.BAD_REQUEST);
 
         usuario.senha = await this.bcrypt.criptografarSenha(usuario.senha);
-
         return this.usuarioRepository.save(usuario);
-
     }
 
     async delete(cpf: string): Promise<void> {
