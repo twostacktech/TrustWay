@@ -7,7 +7,7 @@ export class VeiculoController {
 
   @Post()
   async criar(@Body() dados: any) {
-    return await this.veiculoService.criarTudo(dados);
+    return await this.veiculoService.criar(dados);
   }
 
   @Get()
