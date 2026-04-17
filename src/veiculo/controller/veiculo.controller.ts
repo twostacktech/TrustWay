@@ -1,37 +1,43 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { VeiculoService } from '../service/veiculo.service';
+import { Veiculo } from '../entities/veiculo.entity';
 
-@Controller('veiculos')
+@Controller('/veiculos')
 export class VeiculoController {
   constructor(private readonly veiculoService: VeiculoService) {}
 
   @Post() // Cadastrar veiculo
-  criar(@Body() dados: any) {
-    return this.veiculoService.criar(dados);
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() veiculo: Veiculo): Promise<Veiculo> {
+    return this.veiculoService.create(veiculo);
   }
 
   @Get() // Buscar todos veiculos
-  listar() {
-    return this.veiculoService.listarTodos();
+  @HttpCode(HttpStatus.OK)
+  findAll(): Promise<Veiculo[]> {
+    return this.veiculoService.findAll();
   }
 
   @Get(':placa') // Buscar por placa
-  buscarPorPlaca(@Param('placa') placa: string) {
-    return this.veiculoService.buscarPorPlaca(placa);
+  @HttpCode(HttpStatus.OK)
+  findByPlaca(@Param('placa') placa: string): Promise<Veiculo> {
+    return this.veiculoService.findByPlaca(placa);
   }
 
   @Get('modelo/:modelo') // Buscar por modelo
-  buscarPorModelo(@Param('modelo') modelo: string) {
-    return this.veiculoService.buscarPorModelo(modelo);
+  @HttpCode(HttpStatus.OK)
+  findByModelo(@Param('modelo') modelo: string): Promise<Veiculo[]> {
+    return this.veiculoService.findByModelo(modelo);
   }
 
   @Put(':placa') // Atualizar veiculo
-  atualizar(@Param('placa') placa: string, @Body() dados: any) {
-    return this.veiculoService.atualizar(placa, dados);
+  @HttpCode(HttpStatus.OK)
+  update(@Body() veiculo: Veiculo): Promise<Veiculo> {
+    return this.veiculoService.update(veiculo);
   }
 
   @Delete(':placa') // Deletar veiculo
-  remover(@Param('placa') placa: string) {
-    return this.veiculoService.remover(placa);
+  delete(@Param('placa') placa: string) {
+    return this.veiculoService.delete(placa);
   }
 }
