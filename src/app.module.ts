@@ -8,6 +8,7 @@ import { Usuario } from './usuario/entities/usuario.entity';
 import { Veiculo } from './veiculo/entities/veiculo.entity';
 import { ApoliceModule } from './apolice/apolice.module';
 import { Apolice } from './apolice/entities/apolice.entity';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -24,7 +25,8 @@ import { Apolice } from './apolice/entities/apolice.entity';
     }),
     VeiculoModule,
     UsuarioModule,
-    ApoliceModule
+    ApoliceModule,
+    AuthModule
   ],
     controllers: [AppController],
     providers: [AppService],

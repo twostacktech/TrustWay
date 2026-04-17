@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, MinLength } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity({name: 'tb_usuarios'})
@@ -13,6 +13,10 @@ export class Usuario {
     nome!: string
 
     @IsNotEmpty()
+    @Column({length: 100, nullable: false})
+    tipo!: string
+
+    @IsNotEmpty()
     @Column({length: 255, nullable: false})
     dataNascimento!: string
 
@@ -20,6 +24,7 @@ export class Usuario {
     @Column({length: 255, nullable: false})
     email!: string
 
+    @MinLength(8)
     @IsNotEmpty()
     @Column({length: 255, nullable: false})
     senha!: string
