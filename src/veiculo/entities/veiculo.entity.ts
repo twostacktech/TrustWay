@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 @Entity({ name: 'tb_veiculos' })
 export class Veiculo {
   @PrimaryColumn({ length: 7 })
-  placa!: string;
+  placa!: string; // Chave Primária (PK)
 
   @Column({ length: 100, nullable: false })
   marca!: string;
