@@ -10,7 +10,7 @@ export class Apolice {
 
     @IsNotEmpty()
     @Column({ type: 'date' })
-    data_inicio!: Date;
+    dataInicio!: Date;
 
     @IsNotEmpty()
     @Column({ type: 'decimal', precision: 10, scale: 2 })
@@ -22,11 +22,11 @@ export class Apolice {
 
     @IsNotEmpty()
     @Column({ type: 'decimal', precision: 5, scale: 2 })
-    percentual_cobertura!: number;
+    percentualCobertura!: number;
 
     @IsNotEmpty()
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    valor_franquia!: number;
+    valorFranquia!: number;
 
 
     /*relação com cliente

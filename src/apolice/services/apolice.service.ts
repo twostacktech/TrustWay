@@ -44,8 +44,44 @@ export class ApoliceService {
   }
 
   async update(apolice: Apolice): Promise<Apolice> {
-    await this.findById(apolice.id);
+
+    //verificar se a apolice existe
+    let buscaApolice: Apolice = await this.findById(apolice.id);
+    if (!buscaApolice || !apolice.id)
+      throw new HttpException('Apólice não encontrada!', HttpStatus.NOT_FOUND);
+    
+    //--------------sem relacionamento-------------------//
     return await this.apoliceRepository.save(apolice);
+
+    //--------------com relacionamento-------------------//
+    
+    //se a apolice existe, verificar se o cpf do usuario esta nulo
+    // if (apolice.cpfUsuario){
+
+    //   //verificar se o cpf do usuario existe
+    //   let cpfUsuario = await this.usuarioService.findById(apolice.cpfUsuario) 
+    //   if (!cpfUsuario)
+    //     throw new HttpException('CPF do usuário não encontrado!', HttpStatus.NOT_FOUND);
+
+    //   //se apolice e cpf do usuario existem, verifica se a placa do veiculo esta nula
+    //   if (apolice.placaVeiculo){
+
+    //     //verificar se a placa do veiculo existe
+    //     let placaVeiculo = await this.veiculoService.findById(apolice.placaVeiculo) 
+    //     if (!placaVeiculo)
+    //       throw new HttpException('Placa do veículo não encontrada!', HttpStatus.NOT_FOUND);
+
+    //     //se tudo existe, atualizar a apolice
+    //     return await this.apoliceRepository.save(apolice);
+
+    //   }else{
+    //     throw new HttpException('A placa do veículo nao pode ser nula!', HttpStatus.NOT_FOUND);
+    //   }
+
+    // }else{
+    //   throw new HttpException('O CPF do cliente nao pode ser nulo!', HttpStatus.NOT_FOUND);
+    // }
+
   }
 
   async delete(id: number): Promise<string> {
