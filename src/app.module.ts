@@ -3,6 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VeiculoModule } from './veiculo/module/veiculo.module';
+import { UsuarioModule } from './usuario/usuario.module';
+import { Usuario } from './usuario/entities/usuario.entity';
+import { Veiculo } from './veiculo/entities/veiculo.entity';
 
 @Module({
   imports: [
@@ -13,10 +16,11 @@ import { VeiculoModule } from './veiculo/module/veiculo.module';
       username: 'root',
       password: 'root',
       database: 'db_trustway',
-      entities: [],
+      entities: [Usuario, Veiculo],
       synchronize: true,
     }),
-    VeiculoModule
+    VeiculoModule,
+    UsuarioModule,
   ],
   controllers: [],
   providers: [],
