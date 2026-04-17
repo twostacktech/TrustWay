@@ -6,6 +6,9 @@ import { VeiculoModule } from './veiculo/module/veiculo.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { Usuario } from './usuario/entities/usuario.entity';
 import { Veiculo } from './veiculo/entities/veiculo.entity';
+import { ApoliceModule } from './apolice/apolice.module';
+import { Apolice } from './apolice/entities/apolice.entity';
+
 
 @Module({
   imports: [
@@ -16,13 +19,14 @@ import { Veiculo } from './veiculo/entities/veiculo.entity';
       username: 'root',
       password: 'root',
       database: 'db_trustway',
-      entities: [Usuario, Veiculo],
+      entities: [Usuario, Veiculo, Apolice],
       synchronize: true,
     }),
     VeiculoModule,
     UsuarioModule,
+    ApoliceModule
   ],
-  controllers: [],
-  providers: [],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}
