@@ -1,5 +1,7 @@
 import { IsNotEmpty } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Usuario } from "../../usuario/entities/usuario.entity";
+import { Veiculo } from "../../veiculo/entities/veiculo.entity";
 
 
 @Entity({ name: "tb_apolice" })
@@ -29,7 +31,6 @@ export class Apolice {
     valorFranquia!: number;
 
 
-    /*relação com cliente
 
     @ManyToOne(() => Usuario, (usuario) => usuario.apolices, {
         onDelete: "CASCADE"
@@ -43,6 +44,6 @@ export class Apolice {
         onDelete: "CASCADE"
     })
     @JoinColumn({ name: 'placa_veiculo' })
-    veiculo!: Veiculo; */
+    veiculo!: Veiculo; 
 
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Usuario } from '../../usuario/entities/usuario.entity';
 
 @Entity({ name: 'tb_veiculos' })
 export class Veiculo {
@@ -16,4 +17,13 @@ export class Veiculo {
 
   @Column({ type: 'decimal', precision: 10, scale: 3 })
   precoFip!: number;
+
+  @ManyToOne(() => Usuario, (usuario) => usuario.veiculos, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'usuario_cpf' }) // FK no banco
+  usuario!: Usuario;
+    apolices: any;
+
+
 }

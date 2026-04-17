@@ -1,5 +1,6 @@
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Veiculo } from "../../veiculo/entities/veiculo.entity";
 
 @Entity({name: 'tb_usuarios'})
 export class Usuario {
@@ -33,4 +34,10 @@ export class Usuario {
     @IsNotEmpty()
     @Column({length: 11, nullable: false})
     numeroTelefone!: string;
+    apolices: any;
+
+
+    @OneToMany(() => Veiculo, (veiculo) => veiculo.usuario)
+    veiculos!: Veiculo[];
+
 }
