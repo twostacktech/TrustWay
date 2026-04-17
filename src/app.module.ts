@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { VeiculoModule } from './veiculo/module/veiculo.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: 'db_trustway',
       entities: [],
       synchronize: true,
-    })
+    }),
+    VeiculoModule
   ],
   controllers: [],
   providers: [],
