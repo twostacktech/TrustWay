@@ -2,9 +2,12 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, 
 import { VeiculoService } from '../service/veiculo.service';
 import { Veiculo } from '../entities/veiculo.entity';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Veiculo')
 @UseGuards(JwtAuthGuard)
 @Controller('/veiculos')
+@ApiBearerAuth()
 export class VeiculoController {
   constructor(private readonly veiculoService: VeiculoService) {}
 

@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from 'typeorm';
 import { Usuario } from '../../usuario/entities/usuario.entity';
 import { Apolice } from '../../apolice/entities/apolice.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({ name: 'tb_veiculos' })
 export class Veiculo {
@@ -20,6 +21,7 @@ export class Veiculo {
   @Column({ type: 'decimal', precision: 10, scale: 3 })
   precoFip!: string;
 
+  @ApiProperty({ type: () => Apolice })
   @OneToOne(() => Apolice, (apolice) => apolice.veiculo,{
         onDelete: "CASCADE"
   })
