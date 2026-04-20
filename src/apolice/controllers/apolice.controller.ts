@@ -24,6 +24,12 @@ export class ApoliceController {
 
   }
 
+  @Get("/cpf/:cpf")
+  @HttpCode(HttpStatus.OK)
+  findByCpf(@Param('cpf') cpf: string): Promise<Apolice[]> {
+    return this.apoliceService.findByCpf(cpf);
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() apolice: Apolice): Promise<Apolice> {

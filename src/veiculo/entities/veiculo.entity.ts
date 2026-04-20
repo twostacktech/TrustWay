@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from 'typeorm';
 import { Usuario } from '../../usuario/entities/usuario.entity';
+import { Apolice } from '../../apolice/entities/apolice.entity';
 
 @Entity({ name: 'tb_veiculos' })
 export class Veiculo {
@@ -19,10 +20,8 @@ export class Veiculo {
   @Column({ type: 'decimal', precision: 10, scale: 3 })
   precoFip!: string;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.veiculos, {
-    onDelete: 'CASCADE',
+  @OneToOne(() => Apolice, (apolice) => apolice.veiculo,{
+        onDelete: "CASCADE"
   })
-  @JoinColumn({ name: 'usuario_cpf' })
-  usuario!: Usuario;
-    apolices: any;
+  apolice!: Apolice;
 }

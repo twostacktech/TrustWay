@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { Veiculo } from "../../veiculo/entities/veiculo.entity";
+import { Apolice } from "../../apolice/entities/apolice.entity";
 
 @Entity({name: 'tb_usuarios'})
 export class Usuario {
@@ -34,10 +35,10 @@ export class Usuario {
     @IsNotEmpty()
     @Column({length: 11, nullable: false})
     numeroTelefone!: string;
-    apolices: any;
 
-
-    @OneToMany(() => Veiculo, (veiculo) => veiculo.usuario)
-    veiculos!: Veiculo[];
-
+    // relação com apolice - um usuário pode ter muitas apolices
+    @OneToMany(() => Apolice, (apolice) => apolice.usuario, {
+        onDelete: "CASCADE"
+    })
+    apolice!: Apolice[];
 }

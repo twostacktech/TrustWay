@@ -10,5 +10,6 @@ import { VeiculoService } from './service/veiculo.service';
   ],
   controllers: [VeiculoController],
   providers: [VeiculoService],
+  exports: [VeiculoService]
 })
 export class VeiculoModule {}

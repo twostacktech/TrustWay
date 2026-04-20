@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository, ILike, DeleteResult } from 'typeorm';
 import { Veiculo } from '../entities/veiculo.entity';
 
 @Injectable()
@@ -11,32 +11,48 @@ export class VeiculoService {
   ) {}
 
   // POST: Cadastrar veiculo
-  async create(veiculo: Veiculo) {
+  async create(veiculo: Veiculo): Promise<Veiculo> {
     return await this.veiculoRepo.save(veiculo);
   }
 
   // GET: Buscar todos veiculos
-  async findAll() {
-    return await this.veiculoRepo.find();
+  async findAll(): Promise<Veiculo[]> {
+    return await this.veiculoRepo.find({
+      relations: {
+        apolice: true
+      }
+    });
   }
 
   // GET: Buscar por placa
-  async findByPlaca(placa: string) {
-    const veiculo = await this.veiculoRepo.findOneBy({ placa });
+  async findByPlaca(placa: string): Promise<Veiculo> {
+    const veiculo = await this.veiculoRepo.findOne({ 
+      where:{ placa 
+      },
+      relations: {
+        apolice: true
+      }
+    });
+
     if (!veiculo) 
       throw new NotFoundException('Veículo não encontrado');
     return veiculo;
   }
 
   // GET: Buscar por modelo
-  async findByModelo(modelo: string) {
+  async findByModelo(modelo: string): Promise<Veiculo[]> {
     return await this.veiculoRepo.find({
-      where: { modelo: ILike(`%${modelo}%`) }, // Busca aproximada (ex: busca "Cit" e acha "City")
+      where: { 
+        modelo: ILike(`%${modelo}%`) 
+      }, // Busca aproximada (ex: busca "Cit" e acha "City")
+      relations:{
+        apolice: true
+      }
     });
   }
 
   // PUT: Atualizar veiculo
-  async update(veiculo: Veiculo) {
+  async update(veiculo: Veiculo): Promise<Veiculo> {
     //verificar se Veiculo existe
     let buscaVeiculo: Veiculo = await this.findByPlaca(veiculo.placa);
     if (!buscaVeiculo)
@@ -46,9 +62,8 @@ export class VeiculoService {
   }
 
   // DEL: Deletar veiculo
-  async delete(placa: string) {
-    const veiculo = await this.findByPlaca(placa);
-    await this.veiculoRepo.delete(veiculo);
-    return { message: 'Veículo removido com sucesso' };
+  async delete(placa: string): Promise<DeleteResult> {
+    await this.findByPlaca(placa);
+    return await this.veiculoRepo.delete(placa);
   }
 }

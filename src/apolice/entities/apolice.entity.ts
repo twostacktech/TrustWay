@@ -1,5 +1,5 @@
 import { IsNotEmpty } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Usuario } from "../../usuario/entities/usuario.entity";
 import { Veiculo } from "../../veiculo/entities/veiculo.entity";
 
@@ -30,20 +30,17 @@ export class Apolice {
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     valorFranquia!: number;
 
-
-
-    @ManyToOne(() => Usuario, (usuario) => usuario.apolices, {
+    // relação com usuário - muitos apolices para um usuario
+    @ManyToOne(() => Usuario, (usuario) => usuario.apolice, {
         onDelete: "CASCADE"
     })
     @JoinColumn({ name: 'cpf_cliente' })
     usuario!: Usuario;
 
-    // relação com veículo
-
-    @ManyToOne(() => Veiculo, (veiculo) => veiculo.apolices, {
+    // relação com veículo - uma apolice para um veículo
+    @OneToOne(() => Veiculo, (veiculo) => veiculo.apolice, {
         onDelete: "CASCADE"
     })
     @JoinColumn({ name: 'placa_veiculo' })
     veiculo!: Veiculo; 
-
 }

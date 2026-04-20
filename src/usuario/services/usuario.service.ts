@@ -13,13 +13,21 @@ export class UsuarioService {
     ) {}
 
     async findAll(): Promise<Usuario[]> {
-        return this.usuarioRepository.find();
+        return this.usuarioRepository.find({
+            relations: {
+                apolice: true
+            }
+        });
     }
     
     async findByCpf(cpf: string): Promise<Usuario> {
-    const usuario = await this.usuarioRepository.findOne({
-        where: { cpf },
-        relations: ['veiculos']
+        const usuario = await this.usuarioRepository.findOne({
+        where: { 
+            cpf 
+        },
+        relations: {
+            apolice: true
+        }
     });
 
     if (!usuario)
@@ -34,6 +42,9 @@ export class UsuarioService {
         return this.usuarioRepository.find({
             where: {
                 nome: ILike(`%${nome}%`)
+            },
+            relations: {
+                apolice: true
             }
         });
     }
@@ -42,8 +53,11 @@ export class UsuarioService {
         return await this.usuarioRepository.findOne({
             where: {
                 email: email
+            },
+            relations: {
+                apolice: true
             }
-        })
+        });
     }
 
     async create(usuario: Usuario): Promise<Usuario> {
