@@ -2,12 +2,17 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike, DeleteResult } from 'typeorm';
 import { Veiculo } from '../entities/veiculo.entity';
+import { Apolice } from '../../apolice/entities/apolice.entity';
 
 @Injectable()
 export class VeiculoService {
   constructor(
     @InjectRepository(Veiculo)
     private veiculoRepo: Repository<Veiculo>,
+
+    @InjectRepository(Apolice)
+    private apoliceRepo: Repository<Apolice>,
+
   ) {}
 
   // POST: Cadastrar veiculo
@@ -58,7 +63,34 @@ export class VeiculoService {
     if (!buscaVeiculo)
       throw new HttpException('Veículo não encontrado!', HttpStatus.NOT_FOUND);
 
-    return await this.veiculoRepo.save(veiculo);
+    const veiculoAtualizado = await this.veiculoRepo.save(veiculo);
+
+    // busca apólice ligada ao veículo
+    const apolice = await this.apoliceRepo.findOne({
+      where:{
+        veiculo:{
+          placa: veiculo.placa
+        }
+      },
+      relations:{
+        veiculo:true
+      }
+    });
+
+    if(apolice){
+
+      const anoAtual = new Date().getFullYear();
+      const idadeVeiculo = anoAtual - veiculo.ano;
+
+      if(idadeVeiculo > 10){
+        apolice.mensalidade =
+          apolice.mensalidade * 0.8;
+
+        await this.apoliceRepo.save(apolice);
+      }
+    }
+
+    return veiculoAtualizado;
   }
 
   // DEL: Deletar veiculo

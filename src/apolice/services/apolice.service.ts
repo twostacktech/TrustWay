@@ -70,7 +70,7 @@ export class ApoliceService {
       apolice.veiculo.placa
     );
 
-    const anoAtual = 2026; //new Date().getFullYear();
+    const anoAtual = new Date().getFullYear();
     const idadeVeiculo = anoAtual - veiculo.ano;
 
     // aplica desconto na mensalidade já existente
