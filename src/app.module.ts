@@ -9,18 +9,15 @@ import { ApoliceModule } from './apolice/apolice.module';
 import { Apolice } from './apolice/entities/apolice.entity';
 import { AuthModule } from './auth/auth.module';
 import { VeiculoModule } from './veiculo/veiculo.module';
+import { ProdService } from './data/services/prod.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'db_trustway',
-      entities: [Usuario, Veiculo, Apolice],
-      synchronize: true,
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      useClass: ProdService,
+      imports: [ConfigModule],
     }),
     VeiculoModule,
     UsuarioModule,
@@ -28,6 +25,6 @@ import { VeiculoModule } from './veiculo/veiculo.module';
     AuthModule
   ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [],
 })
 export class AppModule {}
