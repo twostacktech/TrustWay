@@ -58,6 +58,26 @@ export class ApoliceService {
   }
 
   async create(apolice: Apolice): Promise<Apolice> {
+
+    if (!apolice.veiculo) {
+    throw new HttpException(
+        'Veículo não informado',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const veiculo = await this.veiculoService.findByPlaca(
+      apolice.veiculo.placa
+    );
+
+    const anoAtual = 2026; //new Date().getFullYear();
+    const idadeVeiculo = anoAtual - veiculo.ano;
+
+    // aplica desconto na mensalidade já existente
+    if (idadeVeiculo > 10) {
+      apolice.mensalidade = apolice.mensalidade * 0.8;
+    }
+
     return await this.apoliceRepository.save(apolice);
   }
 
