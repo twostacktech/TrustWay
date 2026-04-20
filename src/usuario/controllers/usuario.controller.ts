@@ -41,6 +41,7 @@ export class UsuarioController {
         return this.usuarioService.update(usuario);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete(':cpf')
     @HttpCode(HttpStatus.NO_CONTENT)
     delete(@Param('cpf') cpf: string): Promise<void> {
