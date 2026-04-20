@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 import { Apolice } from "../entities/apolice.entity";
-import { UsuarioService } from "../../usuario/services/usuario.service";
+import { Repository } from "typeorm";
 import { VeiculoService } from "../../veiculo/service/veiculo.service";
+import { UsuarioService } from "../../usuario/services/usuario.service";
 
 @Injectable()
 export class ApoliceService {
@@ -11,167 +11,116 @@ export class ApoliceService {
   constructor(
     @InjectRepository(Apolice)
     private apoliceRepository: Repository<Apolice>,
-
     private usuarioService: UsuarioService,
     private veiculoService: VeiculoService
   ) {}
 
-  // -------------------------
-  // REGRA DE NEGÓCIO
-  // -------------------------
+  async findAll(): Promise<Apolice[]> {
+    return await this.apoliceRepository.find({
+      relations: { 
+        usuario: true,
+        veiculo: true
+      }
 
-  aplicarDescontoVeiculoAntigo(apolice: Apolice): Apolice {
+    });
+  }
 
-    const anoAtual = new Date().getFullYear();
-    const idadeVeiculo = anoAtual - apolice.veiculo.ano;
+  async findById(id: number): Promise<Apolice> {
+    const apolice = await this.apoliceRepository.findOne({
+      where: { 
+        id 
+      },   
+      relations: { 
+        usuario: true,
+        veiculo: true
+      }
 
-    // Mais de 10 anos = 20% desconto
+    });
+
+    if (!apolice) {
+      throw new HttpException('Apólice não encontrada', HttpStatus.NOT_FOUND);
+    }
+    return apolice;
+  }
+
+  //find by cpf do cliente
+  async findByCpf(cpf: string): Promise<Apolice[]> {
+    const apolices = await this.apoliceRepository.find({
+      where: { 
+        usuario: { cpf } 
+      },
+      relations: { 
+        usuario: true,
+        veiculo: true
+      }
+    });
+    return apolices;
+  }
+
+  async create(apolice: Apolice): Promise<Apolice> {
+
+    if (!apolice.veiculo) {
+    throw new HttpException(
+        'Veículo não informado',
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const veiculo = await this.veiculoService.findByPlaca(
+      apolice.veiculo.placa
+    );
+
+    const anoAtual = 2026; //new Date().getFullYear();
+    const idadeVeiculo = anoAtual - veiculo.ano;
+
+    // aplica desconto na mensalidade já existente
     if (idadeVeiculo > 10) {
       apolice.mensalidade = apolice.mensalidade * 0.8;
     }
 
-    return apolice;
-  }
-
-
-  // -------------------------
-  // FIND ALL
-  // -------------------------
-
-  async findAll(): Promise<Apolice[]> {
-
-    const apolices = await this.apoliceRepository.find({
-      relations: {
-        usuario: true,
-        veiculo: true
-      }
-    });
-
-    return apolices.map(apolice =>
-      this.aplicarDescontoVeiculoAntigo(apolice)
-    );
-  }
-
-
-  // -------------------------
-  // FIND BY ID
-  // -------------------------
-
-  async findById(id: number): Promise<Apolice> {
-
-    const apolice = await this.apoliceRepository.findOne({
-      where: { id },
-      relations: {
-        usuario: true,
-        veiculo: true
-      }
-    });
-
-    if (!apolice) {
-      throw new HttpException(
-        'Apólice não encontrada',
-        HttpStatus.NOT_FOUND
-      );
-    }
-
-    return this.aplicarDescontoVeiculoAntigo(apolice);
-  }
-
-
-  // -------------------------
-  // FIND BY CPF
-  // -------------------------
-
-  async findByCpf(cpf: string): Promise<Apolice[]> {
-
-    const apolices = await this.apoliceRepository.find({
-      where: {
-        usuario: { cpf }
-      },
-      relations: {
-        usuario: true,
-        veiculo: true
-      }
-    });
-
-    return apolices.map(apolice =>
-      this.aplicarDescontoVeiculoAntigo(apolice)
-    );
-  }
-
-
-  // -------------------------
-  // CREATE
-  // -------------------------
-
-  async create(apolice: Apolice): Promise<Apolice> {
-
-    if (!apolice.usuario) {
-      throw new HttpException(
-        'CPF do cliente nao pode ser nulo!',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    await this.usuarioService.findByCpf(
-      apolice.usuario.cpf
-    );
-    if (!apolice.veiculo) {
-      throw new HttpException(
-        'A placa do veículo nao pode ser nula!',
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    await this.veiculoService.findByPlaca(
-      apolice.veiculo.placa
-    );
     return await this.apoliceRepository.save(apolice);
   }
-  // -------------------------
-  // UPDATE
-  // -------------------------
+
   async update(apolice: Apolice): Promise<Apolice> {
 
-    const buscaApolice = await this.findById(apolice.id);
+    //verificar se a apolice existe
+    let buscaApolice: Apolice = await this.findById(apolice.id);
+    if (!buscaApolice || !apolice.id)
+      throw new HttpException('Apólice não encontrada!', HttpStatus.NOT_FOUND);
+    
+    //se a apolice existe, verificar se o cpf do usuario esta nulo
+    if (apolice.usuario){
 
-    if (!buscaApolice || !apolice.id) {
-      throw new HttpException(
-        'Apólice não encontrada!',
-        HttpStatus.NOT_FOUND
-      );
-    }
+       //verificar se o cpf do usuario existe
+       let cpfUsuario = await this.usuarioService.findByCpf(apolice.usuario.cpf) 
+       if (!cpfUsuario)
+         throw new HttpException('CPF do usuário não encontrado!', HttpStatus.NOT_FOUND);
 
-    if (!apolice.usuario) {
-      throw new HttpException(
-        'O CPF do cliente nao pode ser nulo!',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+       //se apolice e cpf do usuario existem, verifica se a placa do veiculo esta nula
+       if (apolice.veiculo){
 
-    await this.usuarioService.findByCpf(
-      apolice.usuario.cpf
-    );
+         //verificar se a placa do veiculo existe
+         let placaVeiculo = await this.veiculoService.findByPlaca(apolice.veiculo.placa) 
+         if (!placaVeiculo)
+           throw new HttpException('Placa do veículo não encontrada!', HttpStatus.NOT_FOUND);
 
-    if (!apolice.veiculo) {
-      throw new HttpException(
-        'A placa do veículo nao pode ser nula!',
-        HttpStatus.BAD_REQUEST
-      );
-    }
+         //se tudo existe, atualizar a apolice
+         return await this.apoliceRepository.save(apolice);
 
-    await this.veiculoService.findByPlaca(
-      apolice.veiculo.placa
-    );
+       }else{
+         throw new HttpException('A placa do veículo nao pode ser nula!', HttpStatus.NOT_FOUND);
+       }
 
-    return await this.apoliceRepository.save(apolice);
+     }else{
+       throw new HttpException('O CPF do cliente nao pode ser nulo!', HttpStatus.NOT_FOUND);
+     }
+
   }
-  // -------------------------
-  // DELETE
-  // -------------------------
+
   async delete(id: number): Promise<string> {
     await this.findById(id);
     await this.apoliceRepository.delete(id);
+    
     return "Apólice deletada com sucesso";
   }
 }
