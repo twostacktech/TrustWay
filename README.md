@@ -1,6 +1,6 @@
 # 🚘 TrustWay
 
-A nova era da proteção veicular tecnológica.
+A nova era da proteção veicular tecnológica. 
 
 O **TrustWay** é uma solução criada para elevar o padrão da proteção veicular, unindo robustez operacional a uma interface simplificada. A plataforma elimina as barreiras de entrada do mercado tradicional, entregando uma cobertura versátil e uma infraestrutura de suporte 24h que garante assistência imediata em qualquer imprevisto na estrada.
 
